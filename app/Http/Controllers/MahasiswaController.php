@@ -33,11 +33,11 @@ class MahasiswaController extends Controller
     public function store(Request $request)
     {
 
-        dd(
-            env('BLOB_READ_WRITE_TOKEN'),
-            env('VERCEL_BLOB_BASE_URL'),
-            env('VERCEL_BLOB_STORE_ID')
-        );
+        // dd(
+        //     env('BLOB_READ_WRITE_TOKEN'),
+        //     env('VERCEL_BLOB_BASE_URL'),
+        //     env('VERCEL_BLOB_STORE_ID')
+        // );
         $input = $request->validate([
             'nama' => 'required',
             'npm' => 'required|unique:mahasiswas',
