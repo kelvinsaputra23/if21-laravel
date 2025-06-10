@@ -32,6 +32,12 @@ class MahasiswaController extends Controller
      */
     public function store(Request $request)
     {
+
+        dd(
+            env('BLOB_READ_WRITE_TOKEN'),
+            env('VERCEL_BLOB_BASE_URL'),
+            env('VERCEL_BLOB_STORE_ID')
+        );
         $input = $request->validate([
             'nama' => 'required',
             'npm' => 'required|unique:mahasiswas',
@@ -51,8 +57,8 @@ class MahasiswaController extends Controller
                 $response = Http::withToken(env('BLOB_READ_WRITE_TOKEN'))
                     ->attach('file', file_get_contents($file), $fileName)
                     ->post(env('VERCEL_BLOB_BASE_URL') . '/upload', [
-                        'access' => 'public', // atau 'private' sesuai kebutuhan
-                        // Tambahkan parameter lain jika diperlukan, misal: 'storeId' => env('VERCEL_BLOB_STORE_ID')
+                        'access' => 'public', // atau 'private'
+                        'storeId' => env('VERCEL_BLOB_STORE_ID'), // pastikan ini ada dan benar
                     ]);
 
                 if ($response->successful() && isset($response->json()['url'])) {
