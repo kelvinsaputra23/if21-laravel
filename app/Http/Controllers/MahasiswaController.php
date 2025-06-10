@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Mahasiswa;
 use App\Models\Prodi;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class MahasiswaController extends Controller
 {
@@ -32,12 +32,6 @@ class MahasiswaController extends Controller
      */
     public function store(Request $request)
     {
-
-        // dd(
-        //     env('BLOB_READ_WRITE_TOKEN'),
-        //     env('VERCEL_BLOB_BASE_URL'),
-        //     env('VERCEL_BLOB_STORE_ID')
-        // );
         $input = $request->validate([
             'nama' => 'required',
             'npm' => 'required|unique:mahasiswas',
@@ -50,24 +44,18 @@ class MahasiswaController extends Controller
         ]);
 
         if ($request->hasFile('foto')) {
+            // Upload the file to Cloudinary
             try {
-                $file = $request->file('foto');
-                $fileName = $file->getClientOriginalName();
-
-                $response = Http::withToken(env('BLOB_READ_WRITE_TOKEN'))
-                    ->attach('file', file_get_contents($file), $fileName)
-                    ->post(env('VERCEL_BLOB_BASE_URL') . '/upload', [
-                        'access' => 'public', // atau 'private'
-                        'storeId' => env('VERCEL_BLOB_STORE_ID'), // pastikan ini ada dan benar
-                    ]);
-
-                if ($response->successful() && isset($response->json()['url'])) {
-                    $input['foto'] = $response->json()['url'];
-                } else {
-                    return back()->withErrors(['foto' => 'Vercel Blob upload error: ' . $response->body()]);
-                }
+                $uploadedFile = Cloudinary::upload(
+                    $request->file('foto')->getRealPath(),
+                    [
+                        'folder' => 'mahasiswa',
+                        'resource_type' => 'image'
+                    ]
+                );
+                $input['foto'] = $uploadedFile->getSecurePath();
             } catch (\Exception $e) {
-                return back()->withErrors(['foto' => 'Vercel Blob error: ' . $e->getMessage()]);
+                return back()->withErrors(['foto' => 'Cloudinary error: ' . $e->getMessage()]);
             }
         }
 
