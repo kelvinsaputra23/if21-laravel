@@ -39,27 +39,24 @@ class MahasiswaController extends Controller
             'tanggal_lahir' => 'required|date',
             'jk' => 'required',
             'asal_sma' => 'required',
-            'foto' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'foto' => 'required|file|mimes:jpeg,png,jpg,gif,svg|max:5120', // max 5MB
             'prodi_id' => 'required',
         ]);
 
         if ($request->hasFile('foto')) {
             try {
-                // Upload ke Vercel Blob
                 $file = $request->file('foto');
-                $fileContents = file_get_contents($file->getRealPath());
-                $fileName = uniqid('mahasiswa_') . '.' . $file->getClientOriginalExtension();
+                $fileName = $file->getClientOriginalName();
 
-                $response = Http::attach(
-                    'file',
-                    $fileContents,
-                    $fileName
-                )->post('https://blob.vercel-storage.com/api/upload', [
-                    // Jika perlu, tambahkan parameter autentikasi di sini
-                ]);
+                $response = Http::withToken(env('VERCEL_BLOB_TOKEN'))
+                    ->attach('file', file_get_contents($file), $fileName)
+                    ->post(env('VERCEL_BLOB_BASE_URL') . '/upload', [
+                        'access' => 'public', // atau 'private' sesuai kebutuhan
+                        // Tambahkan parameter lain jika diperlukan, misal: 'storeId' => env('VERCEL_BLOB_STORE_ID')
+                    ]);
 
-                if ($response->successful() && isset($response['url'])) {
-                    $input['foto'] = $response['url'];
+                if ($response->successful() && isset($response->json()['url'])) {
+                    $input['foto'] = $response->json()['url'];
                 } else {
                     return back()->withErrors(['foto' => 'Vercel Blob upload error: ' . $response->body()]);
                 }
