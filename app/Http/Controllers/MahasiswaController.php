@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Mahasiswa;
 use App\Models\Prodi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class MahasiswaController extends Controller
 {
@@ -43,15 +44,30 @@ class MahasiswaController extends Controller
         ]);
 
         if ($request->hasFile('foto')) {
-            $file = $request->file('foto');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
-            // cara ke-1 upload ke dalam folder public
-            // $file->move(public_path('images'), $filename);
-            // cara ke-2 upload ke dalam folder storage
-            $file->storeAs('images', $filename);
+            try {
+                // Upload ke Vercel Blob
+                $file = $request->file('foto');
+                $fileContents = file_get_contents($file->getRealPath());
+                $fileName = uniqid('mahasiswa_') . '.' . $file->getClientOriginalExtension();
 
-            $input['foto'] = $filename;
+                $response = Http::attach(
+                    'file',
+                    $fileContents,
+                    $fileName
+                )->post('https://blob.vercel-storage.com/api/upload', [
+                    // Jika perlu, tambahkan parameter autentikasi di sini
+                ]);
+
+                if ($response->successful() && isset($response['url'])) {
+                    $input['foto'] = $response['url'];
+                } else {
+                    return back()->withErrors(['foto' => 'Vercel Blob upload error: ' . $response->body()]);
+                }
+            } catch (\Exception $e) {
+                return back()->withErrors(['foto' => 'Vercel Blob error: ' . $e->getMessage()]);
+            }
         }
+
         Mahasiswa::create($input);
         return redirect()->route('mahasiswa.index')->with('success', 'Mahasiswa created successfully.');
     }
