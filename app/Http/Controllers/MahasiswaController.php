@@ -48,7 +48,7 @@ class MahasiswaController extends Controller
                 $file = $request->file('foto');
                 $fileName = $file->getClientOriginalName();
 
-                $response = Http::withToken(env('VERCEL_BLOB_TOKEN'))
+                $response = Http::withToken(env('BLOB_READ_WRITE_TOKEN'))
                     ->attach('file', file_get_contents($file), $fileName)
                     ->post(env('VERCEL_BLOB_BASE_URL') . '/upload', [
                         'access' => 'public', // atau 'private' sesuai kebutuhan
