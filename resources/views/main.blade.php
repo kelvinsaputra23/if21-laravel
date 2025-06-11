@@ -180,7 +180,7 @@
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                             <img src="../../../dist/assets/img/user2-160x160.jpg"
                                 class="user-image rounded-circle shadow" alt="User Image" />
-                            <span class="d-none d-md-inline">{{ Auth::user()->name }}</span>
+                          <span class="d-none d-md-inline">{{ Auth::user()->name ?? 'Guest' }}</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                             <!--begin::User Image-->
@@ -188,7 +188,7 @@
                                 <img src="../../../dist/assets/img/user2-160x160.jpg" class="rounded-circle shadow"
                                     alt="User Image" />
                                 <p>
-                                    {{ Auth::user()->name }} - {{ Auth::user()->email }}
+                                   <img src="path/to/user/image.jpg" alt="{{ Auth::user()->name ?? 'User Image' }}">
                                 </p>
                             </li>
                             <!--end::User Image-->
