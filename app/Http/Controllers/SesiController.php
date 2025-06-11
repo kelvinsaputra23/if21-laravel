@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Sesi;
+use App\Models\Session;
 use Illuminate\Http\Request;
 
-class SesiController extends Controller
+class SessionController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $sesis = Sesi::all(); // Mengambil semua data sesi
-        return view('sesi.index', compact('sesis')); // Mengirim data ke view
+        $sessions = Session::all();
+        return view('sessions.index', compact('sessions'));
     }
 
     /**
@@ -21,7 +21,7 @@ class SesiController extends Controller
      */
     public function create()
     {
-        return view('sesi.create'); // Menampilkan form untuk membuat sesi baru
+        return view('sessions.create');
     }
 
     /**
@@ -30,48 +30,60 @@ class SesiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama' => 'required|string|max:20', // Validasi input nama
+            'nama' => 'required|string|max:255|unique:sessions,nama', // Tambahkan unique validation
         ]);
 
-        Sesi::create($request->all()); // Menyimpan data sesi baru
-        return redirect()->route('sesi.index')->with('success', 'Sesi berhasil dibuat.');
+        Session::create($request->all());
+
+        return redirect()->route('sessions.index')
+                         ->with('success', 'Sesi berhasil ditambahkan!');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Sesi $sesi)
+    public function show(Session $session)
     {
-        return view('sesi.show', compact('sesi')); // Menampilkan detail sesi
+        return view('sessions.show', compact('session'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Sesi $sesi)
+    public function edit(Session $session)
     {
-        return view('sesi.edit', compact('sesi')); // Menampilkan form untuk mengedit sesi
+        return view('sessions.edit', compact('session'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Sesi $sesi)
+    public function update(Request $request, Session $session)
     {
         $request->validate([
-            'nama' => 'required|string|max:20', // Validasi input nama
+            'nama' => 'required|string|max:255|unique:sessions,nama,' . $session->id, // Tambahkan unique validation dengan pengecualian ID saat ini
         ]);
 
-        $sesi->update($request->all()); // Memperbarui data sesi
-        return redirect()->route('sesi.index')->with('success', 'Sesi berhasil diperbarui.');
+        $session->update($request->all());
+
+        return redirect()->route('sessions.index')
+                         ->with('success', 'Sesi berhasil diperbarui!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Sesi $sesi)
+    public function destroy(Session $session)
     {
-        $sesi->delete(); // Menghapus sesi
-        return redirect()->route('sesi.index')->with('success', 'Sesi berhasil dihapus.');
+        // Tambahkan pengecekan jika ada jadwal yang terkait sebelum menghapus sesi
+        if ($session->jadwals()->count() > 0) {
+            return redirect()->route('sessions.index')
+                             ->with('error', 'Tidak dapat menghapus sesi karena ada jadwal yang terkait.');
+        }
+
+        $session->delete();
+
+        return redirect()->route('sessions.index')
+                         ->with('success', 'Sesi berhasil dihapus!');
     }
 }

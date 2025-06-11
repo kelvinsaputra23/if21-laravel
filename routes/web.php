@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SessionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FakultasController;
 use App\Http\Controllers\MahasiswaController;
