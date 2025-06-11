@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MataKuliahController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FakultasController;
@@ -26,6 +27,7 @@ Route::middleware('auth')->group(function () {
 Route::resource('/fakultas', FakultasController::class);
 Route::resource('/prodi', ProdiController::class);
 Route::resource('/mahasiswa', MahasiswaController::class);
+Route::resource('mata_kuliahs', MataKuliahController::class);
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
