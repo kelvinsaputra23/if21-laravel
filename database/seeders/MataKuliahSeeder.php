@@ -1,22 +1,77 @@
 <?php
+
 namespace Database\Seeders;
-use App\Models\MataKuliah;
-use App\Models\Prodi; // Pastikan ini diimport
+
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\MataKuliah; // Pastikan model MataKuliah sudah ada
+use App\Models\Prodi; // Diperlukan untuk mendapatkan ID Prodi
+use Illuminate\Support\Str; // Diperlukan untuk menghasilkan UUID
+
 class MataKuliahSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
-        $siProdi = Prodi::where('nama', 'Sistem Informasi')->first();
-        $tiProdi = Prodi::where('nama', 'Teknik Informatika')->first();
+        // Ambil ID dari prodi yang sudah di-seed.
+        // Pastikan ProdiSeeder sudah berjalan dan mengisi data ini.
+        $prodiSI = Prodi::where('singkatan', 'SI')->first(); // Menggunakan singkatan karena lebih ringkas
+        $prodiTI = Prodi::where('singkatan', 'TI')->first();
 
-        if ($siProdi) {
-            MataKuliah::create(['kode_mk' => 'SI101', 'nama' => 'Algoritma Pemrograman', 'prodi_id' => $siProdi->id]);
-            MataKuliah::create(['kode_mk' => 'SI201', 'nama' => 'Basis Data', 'prodi_id' => $siProdi->id]);
+        // Semai data untuk Mata Kuliah di Prodi Sistem Informasi
+        if ($prodiSI) {
+            MataKuliah::firstOrCreate(
+                ['kode_mk' => 'SI101'], // Kriteria pencarian untuk menghindari duplikasi
+                [
+                    'id' => Str::uuid(), // Menghasilkan UUID unik untuk kolom ID
+                    'nama' => 'Algoritma Pemrograman',
+                    'sks' => 3, // Menambahkan kolom SKS
+                    'prodi_id' => $prodiSI->id, // Menggunakan ID dari Prodi Sistem Informasi
+                    // created_at dan updated_at akan diisi otomatis oleh Laravel
+                ]
+            );
+            MataKuliah::firstOrCreate(
+                ['kode_mk' => 'SI201'],
+                [
+                    'id' => Str::uuid(),
+                    'nama' => 'Basis Data',
+                    'sks' => 3, // Menambahkan kolom SKS
+                    'prodi_id' => $prodiSI->id,
+                ]
+            );
+        } else {
+            // Pesan informasi jika Prodi Sistem Informasi tidak ditemukan
+            $this->command->info('Prodi Sistem Informasi tidak ditemukan. Mata Kuliah untuk SI tidak disemai.');
         }
-        if ($tiProdi) {
-            MataKuliah::create(['kode_mk' => 'TI101', 'nama' => 'Struktur Data', 'prodi_id' => $tiProdi->id]);
-            MataKuliah::create(['kode_mk' => 'TI201', 'nama' => 'Jaringan Komputer', 'prodi_id' => $tiProdi->id]);
+
+        // Semai data untuk Mata Kuliah di Prodi Teknik Informatika
+        if ($prodiTI) {
+            MataKuliah::firstOrCreate(
+                ['kode_mk' => 'TI101'],
+                [
+                    'id' => Str::uuid(),
+                    'nama' => 'Struktur Data',
+                    'sks' => 3, // Menambahkan kolom SKS
+                    'prodi_id' => $prodiTI->id, // Menggunakan ID dari Prodi Teknik Informatika
+                ]
+            );
+            MataKuliah::firstOrCreate(
+                ['kode_mk' => 'TI201'],
+                [
+                    'id' => Str::uuid(),
+                    'nama' => 'Jaringan Komputer',
+                    'sks' => 3, // Menambahkan kolom SKS
+                    'prodi_id' => $prodiTI->id,
+                ]
+            );
+        } else {
+            // Pesan informasi jika Prodi Teknik Informatika tidak ditemukan
+            $this->command->info('Prodi Teknik Informatika tidak ditemukan. Mata Kuliah untuk TI tidak disemai.');
         }
+
+        // Anda bisa menambahkan data mata kuliah lain di sini sesuai kebutuhan,
+        // pastikan setiap mata kuliah memiliki UUID unik dan prodi_id yang valid.
     }
 }

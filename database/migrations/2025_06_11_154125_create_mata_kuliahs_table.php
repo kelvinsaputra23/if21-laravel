@@ -12,10 +12,23 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('mata_kuliahs', function (Blueprint $table) {
-            $table->id();
+            // Ubah dari $table->id() menjadi $table->uuid('id')->primary()
+            // agar konsisten dengan tabel lain yang menggunakan UUID
+            $table->uuid('id')->primary();
+
             $table->string('nama');
             $table->string('kode_mk')->unique(); // Kode MK harus unik
             $table->integer('sks');
+
+            // --- BAGIAN YANG DITAMBAHKAN: prodi_id sebagai foreign key ---
+            $table->uuid('prodi_id'); // Pastikan tipe data sesuai dengan ID di tabel 'prodis' (uuid)
+            $table->foreign('prodi_id')
+                  ->references('id')
+                  ->on('prodis') // Mereferensikan tabel 'prodis' (jamak)
+                  ->onDelete('restrict')
+                  ->onUpdate('restrict');
+            // -----------------------------------------------------------
+
             $table->timestamps();
         });
     }

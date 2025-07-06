@@ -11,16 +11,26 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('prodi', function (Blueprint $table) {
-            $table->uuid('id');
-            $table->primary('id');
-            $table->string('nama', 30);
-            $table->char('singkatan', 2);
-            $table->string('kaprodi', 30);
-            $table->string('sekretaris', 30);
+        // Pastikan nama tabel adalah 'prodis' (plural) sesuai konvensi Laravel
+        Schema::create('prodis', function (Blueprint $table) {
+            $table->uuid('id'); // Menggunakan UUID sebagai primary key
+            $table->primary('id'); // Menetapkan 'id' sebagai primary key
+
+            $table->string('nama', 30); // Kolom nama prodi
+            $table->char('singkatan', 2); // Kolom singkatan prodi
+            $table->string('kaprodi', 30); // Kolom nama kepala prodi
+            $table->string('sekretaris', 30); // Kolom nama sekretaris prodi
+
+            // Foreign key ke tabel 'fakultas'
+            // Pastikan 'fakultas_id' di sini sesuai dengan tipe ID di tabel 'fakultas' (uuid)
             $table->uuid('fakultas_id');
-            $table->foreign('fakultas_id')->references('id')->on('fakultas')->onDelete('restrict')->onUpdate('restrict');
-            $table->timestamps();
+            $table->foreign('fakultas_id')
+                  ->references('id')
+                  ->on('fakultas')
+                  ->onDelete('restrict') // Jika fakultas dihapus, prodi tidak ikut dihapus (akan error)
+                  ->onUpdate('restrict'); // Jika ID fakultas diupdate, prodi tidak ikut diupdate (akan error)
+
+            $table->timestamps(); // Kolom created_at dan updated_at
         });
     }
 
@@ -29,6 +39,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('prodis');
+        Schema::dropIfExists('prodis'); // Pastikan ini juga 'prodis'
     }
 };

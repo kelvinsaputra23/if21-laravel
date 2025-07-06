@@ -12,8 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('sesis', function (Blueprint $table) {
-            $table->id();
-            $table->string('nama', 20); // Menambahkan kolom nama dengan tipe varchar dan panjang 20
+            // Ubah dari $table->id() menjadi $table->uuid('id')->primary()
+            // agar konsisten dengan tabel lain yang menggunakan UUID
+            $table->uuid('id')->primary();
+
+            $table->string('nama', 20); // Kolom nama sesi
             $table->timestamps();
         });
     }

@@ -9,13 +9,20 @@ class Sesi extends Model
 {
     use HasFactory;
 
+    // Menentukan bahwa ID tidak auto-incrementing (karena menggunakan UUID)
+    public $incrementing = false;
+
+    // Menentukan tipe data primary key adalah string (karena menggunakan UUID)
+    protected $keyType = 'string';
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
     protected $fillable = [
-        'nama', // Kolom 'nama' adalah satu-satunya yang bisa diisi secara massal
+        'id', // Tambahkan 'id' karena diisi manual dengan UUID di seeder
+        'nama',
     ];
 
     /**

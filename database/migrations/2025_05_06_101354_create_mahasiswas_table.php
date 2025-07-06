@@ -20,9 +20,11 @@ return new class extends Migration
             $table->date('tanggal_lahir');
             $table->string('tempat_lahir', 30);
             $table->string('asal_sma', 50);
-            $table->string('foto', 50);
+            $table->string('foto', 50)->nullable(); // Menambahkan nullable karena mungkin foto belum ada saat seeding/pembuatan awal
             $table->uuid('prodi_id');
-            $table->foreign('prodi_id')->references('id')->on('prodi')->onDelete('restrict')->onUpdate('restrict');
+            // --- BAGIAN YANG DIUBAH: 'on' harus mereferensikan 'prodis' (jamak) ---
+            $table->foreign('prodi_id')->references('id')->on('prodis')->onDelete('restrict')->onUpdate('restrict');
+            // ---------------------------------------------------------------------
             $table->timestamps();
         });
     }

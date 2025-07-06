@@ -12,13 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('fakultas', function (Blueprint $table) {
-            $table->uuid('id');
-            $table->primary('id');
-            $table->string('nama', 50);
-            $table->string('singkatan', 4);
-            $table->string('nama_dekan', 30);
-            $table->string('nama_wadek', 30);
-            $table->timestamps();
+            $table->uuid('id'); // Menggunakan UUID sebagai primary key
+            $table->primary('id'); // Menetapkan 'id' sebagai primary key
+
+            $table->string('nama', 50); // Kolom untuk nama fakultas
+            $table->string('kode_fakultas', 10)->unique(); // Menambahkan kolom kode_fakultas, pastikan unik
+            // Kolom 'singkatan', 'nama_dekan', 'nama_wadek' dihapus karena tidak digunakan di seeder FakultasSeeder Anda.
+            // Jika Anda ingin tetap menggunakannya, Anda harus menambahkannya juga di FakultasSeeder.
+
+            $table->timestamps(); // Kolom created_at dan updated_at
         });
     }
 
