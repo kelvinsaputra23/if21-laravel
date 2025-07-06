@@ -1,18 +1,13 @@
 <?php
-
 namespace App\Models;
-
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
 class Prodi extends Model
 {
-    use HasUuids;
-    protected $table = 'prodi';
-
-    protected $fillable = ['nama', 'singkatan', 'kaprodi', 'sekretaris', 'fakultas_id'];
-
-    public function fakultas() {
-        return $this->belongsTo(Fakultas::class, 'fakultas_id', 'id');
+    use HasFactory;
+    protected $fillable = ['nama']; // Tambahkan kolom lain jika ada
+    public function mataKuliahs()
+    {
+        return $this->hasMany(MataKuliah::class);
     }
 }

@@ -9,15 +9,30 @@ class MataKuliah extends Model
 {
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
-        'nama',
         'kode_mk',
-        'sks',
+        'nama',
+        'prodi_id',
     ];
 
-    // Relasi dengan Jadwal (akan digunakan nanti)
+    /**
+     * Get the prodi that owns the mata kuliah.
+     */
+    public function prodi()
+    {
+        return $this->belongsTo(Prodi::class);
+    }
+
+    /**
+     * Get the jadwals for the mata kuliah.
+     */
     public function jadwals()
     {
-        return $this->hasMany(Jadwal::class, 'mata_kuliah_id');
+        return $this->hasMany(Jadwal::class);
     }
 }
