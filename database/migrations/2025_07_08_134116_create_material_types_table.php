@@ -11,7 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::create('material_type', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('name')->unique(); // e.g., PDF, Video, Link
+            $table->timestamps();
+        });
     }
 
     /**
@@ -19,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('material_type');
     }
 };

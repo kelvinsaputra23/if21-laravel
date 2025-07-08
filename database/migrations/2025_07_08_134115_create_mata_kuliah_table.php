@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sesis', function (Blueprint $table) {
-            // Ubah dari $table->id() menjadi $table->uuid('id')->primary()
-            // agar konsisten dengan tabel lain yang menggunakan UUID
-            $table->uuid('id')->primary();
-
-            $table->string('nama', 20); // Kolom nama sesi
+        Schema::create('mata_kuliah', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('kode_mk')->unique(); // contoh: SI1001
+            $table->string('nama');
+            $table->bigInteger('prodi_id'); // Foreign key ke tabel prodi
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sesis');
+        Schema::dropIfExists('mata_kuliah');
     }
 };

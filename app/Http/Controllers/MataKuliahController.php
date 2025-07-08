@@ -2,92 +2,67 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Matakuliah; // Import model Matakuliah
-use App\Models\Prodi;      // Import model Prodi karena Matakuliah punya foreign key ke Prodi
+use App\Models\MataKuliah;
 use Illuminate\Http\Request;
 
-class MatakuliahController extends Controller
+class MataKuliahController extends Controller
 {
     /**
-     * Menampilkan daftar mata kuliah.
+     * Display a listing of the resource.
      */
     public function index()
     {
-        // Mengambil semua mata kuliah dengan relasi prodi-nya
-        $matakuliah = Matakuliah::with('prodi')->get();
-        return view('matakuliah.index', compact('matakuliah'));
+        $mataKuliah = MataKuliah::all();
+        return response()->json($mataKuliah);
     }
 
     /**
-     * Menampilkan form untuk membuat mata kuliah baru.
-     */
-    public function create()
-    {
-        // Ambil semua prodi untuk dropdown pilihan prodi
-        $prodis = Prodi::all();
-        return view('matakuliah.create', compact('prodis'));
-    }
-
-    /**
-     * Menyimpan mata kuliah baru ke database.
+     * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
         $request->validate([
-            'kode_mk' => 'required|string|max:255|unique:matakuliah,kode_mk',
+            'kode_mk' => 'required|string|unique:mata_kuliah|max:255',
             'nama' => 'required|string|max:255',
-            'prodi_id' => 'required|exists:prodis,id', // Pastikan prodi_id ada di tabel prodis
+            'prodi_id' => 'required|integer',
         ]);
 
-        Matakuliah::create($request->all());
-
-        return redirect()->route('matakuliah.index')
-                         ->with('success', 'Mata Kuliah berhasil ditambahkan.');
+        $mataKuliah = MataKuliah::create($request->all());
+        return response()->json($mataKuliah, 201);
     }
 
     /**
-     * Menampilkan detail mata kuliah tertentu.
+     * Display the specified resource.
      */
-    public function show(Matakuliah $matakuliah)
+    public function show(string $id)
     {
-        return view('matakuliah.show', compact('matakuliah'));
+        $mataKuliah = MataKuliah::findOrFail($id);
+        return response()->json($mataKuliah);
     }
 
     /**
-     * Menampilkan form untuk mengedit mata kuliah.
+     * Update the specified resource in storage.
      */
-    public function edit(Matakuliah $matakuliah)
+    public function update(Request $request, string $id)
     {
-        // Ambil semua prodi untuk dropdown pilihan prodi
-        $prodis = Prodi::all();
-        return view('matakuliah.edit', compact('matakuliah', 'prodis'));
-    }
-
-    /**
-     * Memperbarui data mata kuliah di database.
-     */
-    public function update(Request $request, Matakuliah $matakuliah)
-    {
+        $mataKuliah = MataKuliah::findOrFail($id);
         $request->validate([
-            'kode_mk' => 'required|string|max:255|unique:matakuliah,kode_mk,' . $matakuliah->id,
-            'nama' => 'required|string|max:255',
-            'prodi_id' => 'required|exists:prodis,id',
+            'kode_mk' => 'sometimes|required|string|unique:mata_kuliah,kode_mk,' . $id . '|max:255',
+            'nama' => 'sometimes|required|string|max:255',
+            'prodi_id' => 'sometimes|required|integer',
         ]);
 
-        $matakuliah->update($request->all());
-
-        return redirect()->route('matakuliah.index')
-                         ->with('success', 'Mata Kuliah berhasil diperbarui.');
+        $mataKuliah->update($request->all());
+        return response()->json($mataKuliah);
     }
 
     /**
-     * Menghapus mata kuliah dari database.
+     * Remove the specified resource from storage.
      */
-    public function destroy(Matakuliah $matakuliah)
+    public function destroy(string $id)
     {
-        $matakuliah->delete();
-
-        return redirect()->route('matakuliah.index')
-                         ->with('success', 'Mata Kuliah berhasil dihapus.');
+        $mataKuliah = MataKuliah::findOrFail($id);
+        $mataKuliah->delete();
+        return response()->json(null, 204);
     }
 }

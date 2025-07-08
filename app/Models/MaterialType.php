@@ -3,21 +3,18 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model; // <<< PERBAIKAN DI SINI: dari '->' menjadi '\'
+use Illuminate\Database\Eloquent\Model;
 
 class MaterialType extends Model
 {
     use HasFactory;
 
-    // Kolom 'name' bisa diisi secara massal
+    protected $table = 'material_type';
     protected $fillable = ['name'];
 
-    /**
-     * Definisi relasi: Satu MaterialType bisa memiliki banyak MaterialFile.
-     * Ini memungkinkan kita untuk mengambil semua file materi yang memiliki jenis ini.
-     */
-    public function materialFiles()
+    // Relationship with Material (one-to-many)
+    public function materials()
     {
-        return $this->hasMany(MaterialFile::class);
+        return $this->hasMany(Material::class, 'material_type_id');
     }
 }

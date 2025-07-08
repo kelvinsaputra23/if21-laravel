@@ -9,10 +9,12 @@ class Course extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'code'];
+    protected $table = 'courses';
+    protected $fillable = ['name', 'description'];
 
+    // Relationship with Material (one-to-many)
     public function materials()
     {
-        return $this->hasMany(Material::class);
+        return $this->hasMany(Material::class, 'course_id');
     }
 }

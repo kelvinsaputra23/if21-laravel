@@ -9,27 +9,12 @@ class Sesi extends Model
 {
     use HasFactory;
 
-    // Menentukan bahwa ID tidak auto-incrementing (karena menggunakan UUID)
-    public $incrementing = false;
+    protected $table = 'sesi'; // Specify the table name
+    protected $fillable = ['nama']; // Fields that can be mass assigned
 
-    // Menentukan tipe data primary key adalah string (karena menggunakan UUID)
-    protected $keyType = 'string';
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'id', // Tambahkan 'id' karena diisi manual dengan UUID di seeder
-        'nama',
-    ];
-
-    /**
-     * Get the jadwals for the sesi.
-     */
+    // Relationship with Jadwal (one-to-many)
     public function jadwals()
     {
-        return $this->hasMany(Jadwal::class);
+        return $this->hasMany(Jadwal::class, 'sesi_id');
     }
 }

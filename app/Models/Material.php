@@ -9,15 +9,31 @@ class Material extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'course_id'];
+    protected $table = 'material';
+    protected $fillable = [
+        'course_id',
+        'material_type_id',
+        'title',
+        'file_path',
+        'url',
+        'description',
+        'uploaded_by_dosen_id'
+    ];
 
+    // Relationships (many-to-one)
     public function course()
     {
-        return $this->belongsTo(Course::class);
+        return $this->belongsTo(Course::class, 'course_id');
     }
 
-    public function files()
+    public function materialType()
     {
-        return $this->hasMany(MaterialFile::class);
+        return $this->belongsTo(MaterialType::class, 'material_type_id');
     }
+
+    // Assuming you have a User model for dosen
+    // public function uploader()
+    // {
+    //     return $this->belongsTo(User::class, 'uploaded_by_dosen_id');
+    // }
 }
