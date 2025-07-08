@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->enum('role', ['admin', 'dosen', 'mahasiswa'])
-                ->default('mahasiswa')
-                ->after('email');
+        Schema::create('sesi', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('nama'); // contoh: 07.50-09.30
+            $table->timestamps(); // Adds created_at and updated_at
         });
     }
 
@@ -23,8 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('role');
-        });
+        Schema::dropIfExists('sesi');
     }
 };

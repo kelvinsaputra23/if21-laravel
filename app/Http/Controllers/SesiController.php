@@ -12,16 +12,8 @@ class SesiController extends Controller
      */
     public function index()
     {
-        $sesis = Sesi::all(); // Mengambil semua data sesi
-        return view('sesi.index', compact('sesis')); // Mengirim data ke view
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('sesi.create'); // Menampilkan form untuk membuat sesi baru
+        $sesi = Sesi::all();
+        return response()->json($sesi);
     }
 
     /**
@@ -30,48 +22,43 @@ class SesiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama' => 'required|string|max:20', // Validasi input nama
+            'nama' => 'required|string|max:255',
         ]);
 
-        Sesi::create($request->all()); // Menyimpan data sesi baru
-        return redirect()->route('sesi.index')->with('success', 'Sesi berhasil dibuat.');
+        $sesi = Sesi::create($request->all());
+        return response()->json($sesi, 201); // 201 Created
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Sesi $sesi)
+    public function show(string $id)
     {
-        return view('sesi.show', compact('sesi')); // Menampilkan detail sesi
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Sesi $sesi)
-    {
-        return view('sesi.edit', compact('sesi')); // Menampilkan form untuk mengedit sesi
+        $sesi = Sesi::findOrFail($id);
+        return response()->json($sesi);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Sesi $sesi)
+    public function update(Request $request, string $id)
     {
+        $sesi = Sesi::findOrFail($id);
         $request->validate([
-            'nama' => 'required|string|max:20', // Validasi input nama
+            'nama' => 'required|string|max:255',
         ]);
 
-        $sesi->update($request->all()); // Memperbarui data sesi
-        return redirect()->route('sesi.index')->with('success', 'Sesi berhasil diperbarui.');
+        $sesi->update($request->all());
+        return response()->json($sesi);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Sesi $sesi)
+    public function destroy(string $id)
     {
-        $sesi->delete(); // Menghapus sesi
-        return redirect()->route('sesi.index')->with('success', 'Sesi berhasil dihapus.');
+        $sesi = Sesi::findOrFail($id);
+        $sesi->delete();
+        return response()->json(null, 204); // 204 No Content
     }
 }

@@ -23,6 +23,7 @@ class Mahasiswa extends Model
     protected $casts = [
         'tanggal_lahir' => 'date',
     ];
+    
 
     public function prodi() {
         return $this->belongsTo(Prodi::class, 'prodi_id', 'id');

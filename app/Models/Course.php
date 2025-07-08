@@ -9,6 +9,7 @@ class Course extends Model
 {
     use HasFactory;
 
+<<<<<<< HEAD
     protected $fillable = [
         'kode_mk',
         'nama',
@@ -26,4 +27,14 @@ class Course extends Model
     // {
     //     return $this->belongsTo(Prodi::class);
     // }
+=======
+    protected $table = 'courses';
+    protected $fillable = ['name', 'description'];
+
+    // Relationship with Material (one-to-many)
+    public function materials()
+    {
+        return $this->hasMany(Material::class, 'course_id');
+    }
+>>>>>>> e519eba6a3a4fe01c3862f2883b7f4ccf85217b3
 }
