@@ -2,26 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MataKuliah; // Pastikan ini diimpor
+use App\Models\Matakuliah; // Import model Matakuliah
+use App\Models\Prodi;      // Import model Prodi karena Matakuliah punya foreign key ke Prodi
 use Illuminate\Http\Request;
 
-class MataKuliahController extends Controller
+class MatakuliahController extends Controller
 {
     /**
-     * Menampilkan daftar semua mata kuliah.
+     * Menampilkan daftar mata kuliah.
      */
     public function index()
     {
-        $mataKuliahs = MataKuliah::all();
-        return view('mata_kuliahs.index', compact('mataKuliahs'));
+        // Mengambil semua mata kuliah dengan relasi prodi-nya
+        $matakuliah = Matakuliah::with('prodi')->get();
+        return view('matakuliah.index', compact('matakuliah'));
     }
 
     /**
-     * Menampilkan formulir untuk membuat mata kuliah baru.
+     * Menampilkan form untuk membuat mata kuliah baru.
      */
     public function create()
     {
-        return view('mata_kuliahs.create');
+        // Ambil semua prodi untuk dropdown pilihan prodi
+        $prodis = Prodi::all();
+        return view('matakuliah.create', compact('prodis'));
     }
 
     /**
@@ -30,64 +34,60 @@ class MataKuliahController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'kode_mk' => 'required|string|max:255|unique:matakuliah,kode_mk',
             'nama' => 'required|string|max:255',
-            'kode_mk' => 'required|string|max:255|unique:mata_kuliahs,kode_mk',
-            'sks' => 'required|integer|min:1',
+            'prodi_id' => 'required|exists:prodis,id', // Pastikan prodi_id ada di tabel prodis
         ]);
 
-        MataKuliah::create($request->all());
+        Matakuliah::create($request->all());
 
-        return redirect()->route('mata_kuliahs.index')
-                         ->with('success', 'Mata Kuliah berhasil ditambahkan!');
+        return redirect()->route('matakuliah.index')
+                         ->with('success', 'Mata Kuliah berhasil ditambahkan.');
     }
 
     /**
-     * Menampilkan detail satu mata kuliah.
+     * Menampilkan detail mata kuliah tertentu.
      */
-    public function show(MataKuliah $mataKuliah)
+    public function show(Matakuliah $matakuliah)
     {
-        return view('mata_kuliahs.show', compact('mataKuliah'));
+        return view('matakuliah.show', compact('matakuliah'));
     }
 
     /**
-     * Menampilkan formulir untuk mengedit mata kuliah.
+     * Menampilkan form untuk mengedit mata kuliah.
      */
-    public function edit(MataKuliah $mataKuliah)
+    public function edit(Matakuliah $matakuliah)
     {
-        return view('mata_kuliahs.edit', compact('mataKuliah'));
+        // Ambil semua prodi untuk dropdown pilihan prodi
+        $prodis = Prodi::all();
+        return view('matakuliah.edit', compact('matakuliah', 'prodis'));
     }
 
     /**
-     * Memperbarui mata kuliah di database.
+     * Memperbarui data mata kuliah di database.
      */
-    public function update(Request $request, MataKuliah $mataKuliah)
+    public function update(Request $request, Matakuliah $matakuliah)
     {
         $request->validate([
+            'kode_mk' => 'required|string|max:255|unique:matakuliah,kode_mk,' . $matakuliah->id,
             'nama' => 'required|string|max:255',
-            'kode_mk' => 'required|string|max:255|unique:mata_kuliahs,kode_mk,' . $mataKuliah->id,
-            'sks' => 'required|integer|min:1',
+            'prodi_id' => 'required|exists:prodis,id',
         ]);
 
-        $mataKuliah->update($request->all());
+        $matakuliah->update($request->all());
 
-        return redirect()->route('mata_kuliahs.index')
-                         ->with('success', 'Mata Kuliah berhasil diperbarui!');
+        return redirect()->route('matakuliah.index')
+                         ->with('success', 'Mata Kuliah berhasil diperbarui.');
     }
 
     /**
      * Menghapus mata kuliah dari database.
      */
-    public function destroy(MataKuliah $mataKuliah)
+    public function destroy(Matakuliah $matakuliah)
     {
-        // Pengecekan: Jika ada jadwal yang terkait dengan mata kuliah ini, tidak boleh dihapus
-        if ($mataKuliah->jadwals()->count() > 0) {
-            return redirect()->route('mata_kuliahs.index')
-                             ->with('error', 'Tidak dapat menghapus mata kuliah karena ada jadwal yang terkait.');
-        }
+        $matakuliah->delete();
 
-        $mataKuliah->delete();
-
-        return redirect()->route('mata_kuliahs.index')
-                         ->with('success', 'Mata Kuliah berhasil dihapus!');
+        return redirect()->route('matakuliah.index')
+                         ->with('success', 'Mata Kuliah berhasil dihapus.');
     }
 }
