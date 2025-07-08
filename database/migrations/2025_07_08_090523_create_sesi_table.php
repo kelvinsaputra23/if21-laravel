@@ -4,11 +4,11 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateFakultasTable extends Migration
+class CreateSesiTable extends Migration
 {
     public function up(): void
     {
-        Schema::create('fakultas', function (Blueprint $table) {
+        Schema::create('sesi', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
             $table->timestamps();
@@ -17,6 +17,6 @@ class CreateFakultasTable extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('fakultas');
+        Schema::dropIfExists('sesi');
     }
 }
