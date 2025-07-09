@@ -2,10 +2,6 @@
 
 namespace Database\Seeders;
 
-<<<<<<< HEAD
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-=======
->>>>>>> e519eba6a3a4fe01c3862f2883b7f4ccf85217b3
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -16,26 +12,26 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-<<<<<<< HEAD
-            UserSeeder::class, // Panggil seeder User terlebih dahulu
-            SessionSeeder::class,
-            CourseSeeder::class,
-            // Panggil seeder lain jika ada (misal: ProdiSeeder, MaterialTypeSeeder)
-=======
-            // Seeder yang sudah ada (biarkan saja jika Anda membutuhkannya)
+            // Pastikan UserSeeder dijalankan pertama jika ada dependensi
             UserSeeder::class,
+
+            // Seeders terkait struktur akademik
             FakultasSeeder::class,
-            ProdiSeeder::class,
-            SesiSeeder::class,
+            ProdiSeeder::class, // Prodi kemungkinan bergantung pada Fakultas
+
+            // Seeders terkait sesi, mata kuliah, dan jadwal
+            SessionSeeder::class, // Ini dari versi HEAD
+            SesiSeeder::class, // Ini dari versi lain (kemungkinan Sesi adalah versi bahasa Indonesia dari Session)
             MataKuliahSeeder::class,
             JadwalSeeder::class,
 
-            // --- Seeder untuk Fitur Materi ---
-            // Pastikan urutannya benar: Course dan MaterialType sebelum Material
+            // Seeders terkait materi pelajaran
+            // Jika ada dua CourseSeeder yang berbeda secara fungsional,
+            // Anda mungkin perlu mengganti nama salah satunya atau menggabungkannya.
+            // Untuk sekarang, kita asumsikan CourseSeeder yang lebih lengkap dari salah satu versi sudah cukup.
             CourseSeeder::class,
             MaterialTypeSeeder::class,
             MaterialSeeder::class,
->>>>>>> e519eba6a3a4fe01c3862f2883b7f4ccf85217b3
         ]);
     }
 }
